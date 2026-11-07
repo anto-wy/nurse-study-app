@@ -1,9 +1,11 @@
 
+  
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#176b50">
 <title>Nurse Study</title>
 
 <style>
@@ -16,6 +18,7 @@ body {
   font-family: Arial, sans-serif;
   background: #f0f7f4;
   color: #18352c;
+  padding-bottom: 85px;
 }
 
 header {
@@ -29,12 +32,12 @@ header h1 {
   margin: 0;
 }
 
-header p {
-  margin-bottom: 0;
-}
-
 main {
   padding: 20px;
+}
+
+h2 {
+  margin-top: 22px;
 }
 
 input {
@@ -43,10 +46,6 @@ input {
   border: 1px solid #ccc;
   border-radius: 12px;
   font-size: 16px;
-}
-
-h2 {
-  margin-top: 25px;
 }
 
 .card {
@@ -66,25 +65,67 @@ button {
   color: white;
   border: none;
   border-radius: 10px;
-  padding: 12px 18px;
+  padding: 12px 16px;
   font-size: 15px;
   cursor: pointer;
   margin: 5px 0;
+}
+
+.secondary {
+  background: #e5f2eb;
+  color: #176b50;
 }
 
 .option {
   display: block;
   width: 100%;
   text-align: left;
-  background: #e6f3ed;
+  background: #e5f2eb;
   color: #18352c;
+  margin: 8px 0;
 }
 
-.option:hover {
-  background: #cce8da;
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  background: white;
+  box-shadow: 0 -3px 15px #00000012;
+  padding: 10px 4px;
+  z-index: 10;
 }
 
-#feedback {
+.nav-btn {
+  background: transparent;
+  color: #65736b;
+  padding: 8px 5px;
+  font-size: 12px;
+  flex: 1;
+}
+
+.nav-btn span {
+  display: block;
+  font-size: 21px;
+  margin-bottom: 4px;
+}
+
+.nav-btn.active {
+  color: #176b50;
+  font-weight: bold;
+}
+
+.page {
+  display: none;
+}
+
+.page.active {
+  display: block;
+}
+
+.feedback {
   font-weight: bold;
 }
 
@@ -105,57 +146,53 @@ footer {
 
 <main>
 
+<!-- HOME PAGE -->
+<section id="home" class="page active">
+
   <h2>Welcome, Nurse! 👋</h2>
   <p>Learn something new every day.</p>
 
-  <input
-    type="text"
-    id="search"
-    placeholder="Search nursing topics..."
-    oninput="searchTopics()"
-  >
-
-  <h2>📚 Study Notes</h2>
-
-  <div id="topics">
-
-    <div class="card">
-      <h3>💓 Vital Signs</h3>
-      <p>Learn about temperature, pulse,
-      respiration and blood pressure.</p>
-      <button onclick="showTopic('vitals')">
-        Read Notes
-      </button>
-    </div>
-
-    <div class="card">
-      <h3>💉 Nursing Procedures</h3>
-      <p>Study hand hygiene, injections
-      and aseptic techniques.</p>
-      <button onclick="showTopic('procedures')">
-        Read Notes
-      </button>
-    </div>
-
-    <div class="card">
-      <h3>💊 Pharmacology</h3>
-      <p>Learn about medication safety
-      and nursing responsibilities.</p>
-      <button onclick="showTopic('drugs')">
-        Read Notes
-      </button>
-    </div>
-
+  <div class="card">
+    <h3>📖 Your Learning Space</h3>
+    <p>Study nursing notes, practice MCQs,
+    and save important topics.</p>
   </div>
 
-  <div class="card" id="lesson" style="display:none">
-    <h3 id="lessonTitle"></h3>
-    <p id="lessonText"></p>
-    <button onclick="closeLesson()">Back</button>
+  <h2>Explore Topics</h2>
+
+  <div class="card">
+    <h3>💓 Vital Signs</h3>
+    <p>Learn normal adult vital signs.</p>
+    <button onclick="openNotes()">Explore Notes</button>
   </div>
 
-  <section class="card" id="quiz">
-    <h2>🧠 Nursing MCQ Quiz</h2>
+  <div class="card">
+    <h3>🧠 Nursing Quiz</h3>
+    <p>Test your nursing knowledge.</p>
+    <button onclick="showPage('quiz')">Start Quiz</button>
+  </div>
+
+</section>
+
+<!-- NOTES PAGE -->
+<section id="notes" class="page">
+
+  <h2>📚 Nursing Notes</h2>
+
+  <input id="search"
+    placeholder="Search topics..."
+    oninput="searchNotes()">
+
+  <div id="notesList"></div>
+
+</section>
+
+<!-- QUIZ PAGE -->
+<section id="quiz" class="page">
+
+  <h2>🧠 Nursing MCQ Quiz</h2>
+
+  <div class="card">
 
     <p id="questionNumber">Question 1</p>
 
@@ -163,81 +200,270 @@ footer {
 
     <div id="options"></div>
 
-    <p id="feedback"></p>
+    <p id="feedback" class="feedback"></p>
 
     <button id="nextButton" onclick="nextQuestion()">
       Next Question
     </button>
-  </section>
+
+  </div>
+
+</section>
+
+<!-- SAVED PAGE -->
+<section id="saved" class="page">
+
+  <h2>⭐ Saved Topics</h2>
+
+  <p>Your favorite nursing notes are saved here.</p>
+
+  <div id="savedList"></div>
+
+</section>
 
 </main>
 
+<nav class="bottom-nav">
+
+  <button class="nav-btn active"
+    onclick="showPage('home', this)">
+    <span>🏠</span>Home
+  </button>
+
+  <button class="nav-btn"
+    onclick="showPage('notes', this)">
+    <span>📚</span>Notes
+  </button>
+
+  <button class="nav-btn"
+    onclick="showPage('quiz', this)">
+    <span>🧠</span>Quiz
+  </button>
+
+  <button class="nav-btn"
+    onclick="showPage('saved', this)">
+    <span>⭐</span>Saved
+  </button>
+
+</nav>
+
 <footer>
-  Nurse Study App • Learn • Practice • Grow
+  Nurse Study • Learn • Practice • Grow
 </footer>
 
 <script>
 
-const lessons = {
-  vitals: {
-    title: "Normal Adult Vital Signs",
-    text: "Temperature: approximately 36.5–37.5°C. " +
-    "Pulse: 60–100 beats/min. " +
-    "Respiration: 12–20 breaths/min. " +
-    "Blood pressure: commonly around 120/80 mmHg. " +
-    "Values vary with the patient and clinical context."
+// NURSING NOTES
+
+const nursingNotes = [
+  {
+    id: "vitals",
+    title: "💓 Vital Signs",
+    text: "Common adult reference values: pulse 60–100 beats/min, respiratory rate 12–20 breaths/min, and temperature often around 36.5–37.5°C. Blood pressure varies; approximately 120/80 mmHg is a common reference. Assess the patient and follow clinical guidance."
   },
 
-  procedures: {
-    title: "Hand Hygiene",
-    text: "Hand hygiene is essential to prevent " +
-    "healthcare-associated infections. " +
-    "Follow the WHO 5 Moments for Hand Hygiene " +
-    "and your hospital's infection-control protocol."
+  {
+    id: "handhygiene",
+    title: "🧼 Hand Hygiene",
+    text: "Hand hygiene helps prevent healthcare-associated infections. Follow the WHO 5 Moments for Hand Hygiene and your facility's infection-control policy."
   },
 
-  drugs: {
-    title: "Medication Safety",
-    text: "Always verify the correct patient, " +
-    "medication, dose, route and time. " +
-    "Follow your prescription and hospital protocol."
+  {
+    id: "medication",
+    title: "💊 Medication Safety",
+    text: "Before administering medication, verify the patient, medicine, dose, route, time, documentation, allergies, and relevant clinical checks. Follow your prescription and local protocol."
+  },
+
+  {
+    id: "injections",
+    title: "💉 Injection Safety",
+    text: "Use aseptic technique, the correct medication and route, and appropriate equipment. Never reuse needles or syringes. Follow institutional policy and supervised training."
+  },
+
+  {
+    id: "oxygen",
+    title: "🫁 Oxygen Therapy",
+    text: "Oxygen is a medication. Use the prescribed device and flow, monitor oxygen saturation and patient condition, and follow clinical guidance."
   }
-};
+];
 
-function showTopic(topic) {
-  document.getElementById("lessonTitle").textContent =
-    lessons[topic].title;
+function showPage(pageId, button) {
+  document.querySelectorAll(".page").forEach(page => {
+    page.classList.remove("active");
+  });
 
-  document.getElementById("lessonText").textContent =
-    lessons[topic].text;
+  document.getElementById(pageId).classList.add("active");
 
-  document.getElementById("lesson").style.display = "block";
+  document.querySelectorAll(".nav-btn").forEach(btn => {
+    btn.classList.remove("active");
+  });
+
+  if (button) {
+    button.classList.add("active");
+  } else {
+    const navButtons = document.querySelectorAll(".nav-btn");
+
+    navButtons.forEach(btn => {
+      if (btn.getAttribute("onclick").includes(pageId)) {
+        btn.classList.add("active");
+      }
+    });
+  }
+
+  if (pageId === "saved") {
+    renderSaved();
+  }
+
+  window.scrollTo(0, 0);
 }
 
-function closeLesson() {
-  document.getElementById("lesson").style.display = "none";
+function openNotes() {
+  showPage("notes");
 }
 
-function searchTopics() {
-  let query = document.getElementById("search")
-    .value.toLowerCase();
+// DISPLAY NOTES
 
-  let cards = document.querySelectorAll("#topics .card");
+function renderNotes(list = nursingNotes) {
+  const notesList = document.getElementById("notesList");
 
-  cards.forEach(card => {
-    let text = card.textContent.toLowerCase();
+  notesList.innerHTML = "";
 
-    card.style.display =
-      text.includes(query) ? "block" : "none";
+  if (list.length === 0) {
+    notesList.innerHTML = "<p>No topics found.</p>";
+    return;
+  }
+
+  list.forEach(note => {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const title = document.createElement("h3");
+    title.textContent = note.title;
+
+    const text = document.createElement("p");
+    text.textContent = note.text;
+
+    const saveButton = document.createElement("button");
+    saveButton.className = "secondary";
+    saveButton.textContent = isSaved(note.id)
+      ? "⭐ Saved"
+      : "☆ Save Topic";
+
+    saveButton.onclick = () => toggleSaved(note.id);
+
+    card.appendChild(title);
+    card.appendChild(text);
+    card.appendChild(saveButton);
+
+    notesList.appendChild(card);
   });
 }
 
+function searchNotes() {
+  const query = document.getElementById("search")
+    .value.toLowerCase();
+
+  const filtered = nursingNotes.filter(note =>
+    (note.title + " " + note.text)
+      .toLowerCase()
+      .includes(query)
+  );
+
+  renderNotes(filtered);
+}
+
+// SAVED TOPICS
+
+function getSaved() {
+  try {
+    return JSON.parse(localStorage.getItem("savedNursingTopics")) || [];
+  } catch {
+    return [];
+  }
+}
+
+function isSaved(id) {
+  return getSaved().includes(id);
+}
+
+function toggleSaved(id) {
+  let saved = getSaved();
+
+  if (saved.includes(id)) {
+    saved = saved.filter(item => item !== id);
+  } else {
+    saved.push(id);
+  }
+
+  localStorage.setItem("savedNursingTopics", JSON.stringify(saved));
+
+  renderNotes(
+    nursingNotes.filter(note =>
+      note.title.toLowerCase().includes(
+        document.getElementById("search").value.toLowerCase()
+      ) ||
+      note.text.toLowerCase().includes(
+        document.getElementById("search").value.toLowerCase()
+      )
+    )
+  );
+
+  renderSaved();
+}
+
+function renderSaved() {
+  const savedList = document.getElementById("savedList");
+  const savedIds = getSaved();
+
+  const savedNotes = nursingNotes.filter(note =>
+    savedIds.includes(note.id)
+  );
+
+  savedList.innerHTML = "";
+
+  if (savedNotes.length === 0) {
+    savedList.innerHTML =
+      "<div class='card'>No saved topics yet. Open Notes and save a topic ⭐</div>";
+    return;
+  }
+
+  savedNotes.forEach(note => {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const title = document.createElement("h3");
+    title.textContent = note.title;
+
+    const text = document.createElement("p");
+    text.textContent = note.text;
+
+    const removeButton = document.createElement("button");
+    removeButton.className = "secondary";
+    removeButton.textContent = "Remove from Saved";
+
+    removeButton.onclick = () => toggleSaved(note.id);
+
+    card.appendChild(title);
+    card.appendChild(text);
+    card.appendChild(removeButton);
+
+    savedList.appendChild(card);
+  });
+// QUIZ
+
 const quizQuestions = [
   {
-    question: "What is the normal adult pulse rate?",
+    question: "What is the common normal adult pulse range?",
     options: ["40–50 bpm", "60–100 bpm", "110–130 bpm", "20–30 bpm"],
     answer: 1
   },
+
   {
-    question: "Which instrument measures blood pressure?",
+    question: "Which instrument is used to measure blood pressure?",
+    options: ["Thermometer", "Glucometer", "Sphygmomanometer", "Otoscope"],
+    answer: 2
+  },
+
+  {
+
 
