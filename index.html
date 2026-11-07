@@ -1,1 +1,243 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nurse Study</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f0f7f4;
+  color: #18352c;
+}
+
+header {
+  background: #176b50;
+  color: white;
+  padding: 25px 20px;
+  border-radius: 0 0 25px 25px;
+}
+
+header h1 {
+  margin: 0;
+}
+
+header p {
+  margin-bottom: 0;
+}
+
+main {
+  padding: 20px;
+}
+
+input {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  font-size: 16px;
+}
+
+h2 {
+  margin-top: 25px;
+}
+
+.card {
+  background: white;
+  padding: 18px;
+  margin: 12px 0;
+  border-radius: 16px;
+  box-shadow: 0 3px 10px #00000008;
+}
+
+.card h3 {
+  margin-top: 0;
+}
+
+button {
+  background: #176b50;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 18px;
+  font-size: 15px;
+  cursor: pointer;
+  margin: 5px 0;
+}
+
+.option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: #e6f3ed;
+  color: #18352c;
+}
+
+.option:hover {
+  background: #cce8da;
+}
+
+#feedback {
+  font-weight: bold;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  color: #777;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🩺 Nurse Study</h1>
+  <p>Your daily nursing learning companion</p>
+</header>
+
+<main>
+
+  <h2>Welcome, Nurse! 👋</h2>
+  <p>Learn something new every day.</p>
+
+  <input
+    type="text"
+    id="search"
+    placeholder="Search nursing topics..."
+    oninput="searchTopics()"
+  >
+
+  <h2>📚 Study Notes</h2>
+
+  <div id="topics">
+
+    <div class="card">
+      <h3>💓 Vital Signs</h3>
+      <p>Learn about temperature, pulse,
+      respiration and blood pressure.</p>
+      <button onclick="showTopic('vitals')">
+        Read Notes
+      </button>
+    </div>
+
+    <div class="card">
+      <h3>💉 Nursing Procedures</h3>
+      <p>Study hand hygiene, injections
+      and aseptic techniques.</p>
+      <button onclick="showTopic('procedures')">
+        Read Notes
+      </button>
+    </div>
+
+    <div class="card">
+      <h3>💊 Pharmacology</h3>
+      <p>Learn about medication safety
+      and nursing responsibilities.</p>
+      <button onclick="showTopic('drugs')">
+        Read Notes
+      </button>
+    </div>
+
+  </div>
+
+  <div class="card" id="lesson" style="display:none">
+    <h3 id="lessonTitle"></h3>
+    <p id="lessonText"></p>
+    <button onclick="closeLesson()">Back</button>
+  </div>
+
+  <section class="card" id="quiz">
+    <h2>🧠 Nursing MCQ Quiz</h2>
+
+    <p id="questionNumber">Question 1</p>
+
+    <h3 id="question">Loading question...</h3>
+
+    <div id="options"></div>
+
+    <p id="feedback"></p>
+
+    <button id="nextButton" onclick="nextQuestion()">
+      Next Question
+    </button>
+  </section>
+
+</main>
+
+<footer>
+  Nurse Study App • Learn • Practice • Grow
+</footer>
+
+<script>
+
+const lessons = {
+  vitals: {
+    title: "Normal Adult Vital Signs",
+    text: "Temperature: approximately 36.5–37.5°C. " +
+    "Pulse: 60–100 beats/min. " +
+    "Respiration: 12–20 breaths/min. " +
+    "Blood pressure: commonly around 120/80 mmHg. " +
+    "Values vary with the patient and clinical context."
+  },
+
+  procedures: {
+    title: "Hand Hygiene",
+    text: "Hand hygiene is essential to prevent " +
+    "healthcare-associated infections. " +
+    "Follow the WHO 5 Moments for Hand Hygiene " +
+    "and your hospital's infection-control protocol."
+  },
+
+  drugs: {
+    title: "Medication Safety",
+    text: "Always verify the correct patient, " +
+    "medication, dose, route and time. " +
+    "Follow your prescription and hospital protocol."
+  }
+};
+
+function showTopic(topic) {
+  document.getElementById("lessonTitle").textContent =
+    lessons[topic].title;
+
+  document.getElementById("lessonText").textContent =
+    lessons[topic].text;
+
+  document.getElementById("lesson").style.display = "block";
+}
+
+function closeLesson() {
+  document.getElementById("lesson").style.display = "none";
+}
+
+function searchTopics() {
+  let query = document.getElementById("search")
+    .value.toLowerCase();
+
+  let cards = document.querySelectorAll("#topics .card");
+
+  cards.forEach(card => {
+    let text = card.textContent.toLowerCase();
+
+    card.style.display =
+      text.includes(query) ? "block" : "none";
+  });
+}
+
+const quizQuestions = [
+  {
+    question: "What is the normal adult pulse rate?",
+    options: ["40–50 bpm", "60–100 bpm", "110–130 bpm", "20–30 bpm"],
+    answer: 1
+  },
+  {
+    question: "Which instrument measures blood pressure?",
+
