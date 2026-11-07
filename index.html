@@ -1,12 +1,11 @@
 
-  
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#176b50">
-<title>Nurse Study</title>
+<title>Nurse Study App</title>
 
 <style>
 * {
@@ -18,7 +17,7 @@ body {
   font-family: Arial, sans-serif;
   background: #f0f7f4;
   color: #18352c;
-  padding-bottom: 85px;
+  padding-bottom: 90px;
 }
 
 header {
@@ -30,6 +29,11 @@ header {
 
 header h1 {
   margin: 0;
+  font-size: 28px;
+}
+
+header p {
+  margin-bottom: 0;
 }
 
 main {
@@ -46,6 +50,7 @@ input {
   border: 1px solid #ccc;
   border-radius: 12px;
   font-size: 16px;
+  margin-bottom: 12px;
 }
 
 .card {
@@ -94,21 +99,21 @@ button {
   justify-content: space-around;
   background: white;
   box-shadow: 0 -3px 15px #00000012;
-  padding: 10px 4px;
+  padding: 8px 4px;
   z-index: 10;
 }
 
 .nav-btn {
   background: transparent;
   color: #65736b;
-  padding: 8px 5px;
+  padding: 8px 4px;
   font-size: 12px;
   flex: 1;
 }
 
 .nav-btn span {
   display: block;
-  font-size: 21px;
+  font-size: 22px;
   margin-bottom: 4px;
 }
 
@@ -146,7 +151,7 @@ footer {
 
 <main>
 
-<!-- HOME PAGE -->
+<!-- HOME -->
 <section id="home" class="page active">
 
   <h2>Welcome, Nurse! 👋</h2>
@@ -163,31 +168,38 @@ footer {
   <div class="card">
     <h3>💓 Vital Signs</h3>
     <p>Learn normal adult vital signs.</p>
-    <button onclick="openNotes()">Explore Notes</button>
+    <button onclick="showPage('notes')">
+      Explore Notes
+    </button>
   </div>
 
   <div class="card">
     <h3>🧠 Nursing Quiz</h3>
     <p>Test your nursing knowledge.</p>
-    <button onclick="showPage('quiz')">Start Quiz</button>
+    <button onclick="showPage('quiz')">
+      Start Quiz
+    </button>
   </div>
 
 </section>
 
-<!-- NOTES PAGE -->
+<!-- NOTES -->
 <section id="notes" class="page">
 
   <h2>📚 Nursing Notes</h2>
 
-  <input id="search"
-    placeholder="Search topics..."
-    oninput="searchNotes()">
+  <input
+    id="search"
+    type="text"
+    placeholder="Search nursing topics..."
+    oninput="searchNotes()"
+  >
 
   <div id="notesList"></div>
 
 </section>
 
-<!-- QUIZ PAGE -->
+<!-- QUIZ -->
 <section id="quiz" class="page">
 
   <h2>🧠 Nursing MCQ Quiz</h2>
@@ -210,7 +222,7 @@ footer {
 
 </section>
 
-<!-- SAVED PAGE -->
+<!-- SAVED -->
 <section id="saved" class="page">
 
   <h2>⭐ Saved Topics</h2>
@@ -223,6 +235,7 @@ footer {
 
 </main>
 
+<!-- BOTTOM NAVIGATION -->
 <nav class="bottom-nav">
 
   <button class="nav-btn active"
@@ -284,10 +297,25 @@ const nursingNotes = [
     id: "oxygen",
     title: "🫁 Oxygen Therapy",
     text: "Oxygen is a medication. Use the prescribed device and flow, monitor oxygen saturation and patient condition, and follow clinical guidance."
+  },
+
+  {
+    id: "cpr",
+    title: "❤️ Adult CPR",
+    text: "For an unresponsive adult who is not breathing normally, activate emergency response and begin CPR according to current BLS guidance. Use an AED as soon as available. Follow your certified training."
+  },
+
+  {
+    id: "gcs",
+    title: "🧠 Glasgow Coma Scale",
+    text: "GCS assesses eye opening, verbal response, and motor response. Scores range from 3 to 15. Document each component and assess changes in the patient's condition."
   }
 ];
 
+// PAGE NAVIGATION
+
 function showPage(pageId, button) {
+
   document.querySelectorAll(".page").forEach(page => {
     page.classList.remove("active");
   });
@@ -301,9 +329,7 @@ function showPage(pageId, button) {
   if (button) {
     button.classList.add("active");
   } else {
-    const navButtons = document.querySelectorAll(".nav-btn");
-
-    navButtons.forEach(btn => {
+    document.querySelectorAll(".nav-btn").forEach(btn => {
       if (btn.getAttribute("onclick").includes(pageId)) {
         btn.classList.add("active");
       }
@@ -317,49 +343,10 @@ function showPage(pageId, button) {
   window.scrollTo(0, 0);
 }
 
-function openNotes() {
-  showPage("notes");
-}
-
-// DISPLAY NOTES
-
-function renderNotes(list = nursingNotes) {
-  const notesList = document.getElementById("notesList");
-
-  notesList.innerHTML = "";
-
-  if (list.length === 0) {
-    notesList.innerHTML = "<p>No topics found.</p>";
-    return;
-  }
-
-  list.forEach(note => {
-    const card = document.createElement("div");
-    card.className = "card";
-
-    const title = document.createElement("h3");
-    title.textContent = note.title;
-
-    const text = document.createElement("p");
-    text.textContent = note.text;
-
-    const saveButton = document.createElement("button");
-    saveButton.className = "secondary";
-    saveButton.textContent = isSaved(note.id)
-      ? "⭐ Saved"
-      : "☆ Save Topic";
-
-    saveButton.onclick = () => toggleSaved(note.id);
-
-    card.appendChild(title);
-    card.appendChild(text);
-    card.appendChild(saveButton);
-
-    notesList.appendChild(card);
-  });
-}
+// SEARCH NOTES
 
 function searchNotes() {
+
   const query = document.getElementById("search")
     .value.toLowerCase();
 
@@ -372,14 +359,63 @@ function searchNotes() {
   renderNotes(filtered);
 }
 
+// DISPLAY NOTES
+
+function renderNotes(list = nursingNotes) {
+
+  const notesList = document.getElementById("notesList");
+
+  notesList.innerHTML = "";
+
+  if (list.length === 0) {
+    notesList.innerHTML = "<p>No topics found.</p>";
+    return;
+  }
+
+  list.forEach(note => {
+
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const title = document.createElement("h3");
+    title.textContent = note.title;
+
+    const text = document.createElement("p");
+    text.textContent = note.text;
+
+    const saveButton = document.createElement("button");
+    saveButton.className = "secondary";
+
+    saveButton.textContent = isSaved(note.id)
+      ? "⭐ Saved"
+      : "☆ Save Topic";
+
+    saveButton.onclick = function() {
+      toggleSaved(note.id);
+    };
+
+    card.appendChild(title);
+    card.appendChild(text);
+    card.appendChild(saveButton);
+
+    notesList.appendChild(card);
+
+  });
+}
+
 // SAVED TOPICS
 
 function getSaved() {
+
   try {
-    return JSON.parse(localStorage.getItem("savedNursingTopics")) || [];
-  } catch {
+    return JSON.parse(
+      localStorage.getItem("savedNursingTopics")
+    ) || [];
+
+  } catch (error) {
     return [];
   }
+
 }
 
 function isSaved(id) {
@@ -387,32 +423,33 @@ function isSaved(id) {
 }
 
 function toggleSaved(id) {
+
   let saved = getSaved();
 
   if (saved.includes(id)) {
+
     saved = saved.filter(item => item !== id);
+
   } else {
+
     saved.push(id);
+
   }
 
-  localStorage.setItem("savedNursingTopics", JSON.stringify(saved));
-
-  renderNotes(
-    nursingNotes.filter(note =>
-      note.title.toLowerCase().includes(
-        document.getElementById("search").value.toLowerCase()
-      ) ||
-      note.text.toLowerCase().includes(
-        document.getElementById("search").value.toLowerCase()
-      )
-    )
+  localStorage.setItem(
+    "savedNursingTopics",
+    JSON.stringify(saved)
   );
 
+  searchNotes();
   renderSaved();
+
 }
 
 function renderSaved() {
+
   const savedList = document.getElementById("savedList");
+
   const savedIds = getSaved();
 
   const savedNotes = nursingNotes.filter(note =>
@@ -422,12 +459,15 @@ function renderSaved() {
   savedList.innerHTML = "";
 
   if (savedNotes.length === 0) {
+
     savedList.innerHTML =
       "<div class='card'>No saved topics yet. Open Notes and save a topic ⭐</div>";
+
     return;
   }
 
   savedNotes.forEach(note => {
+
     const card = document.createElement("div");
     card.className = "card";
 
@@ -441,17 +481,24 @@ function renderSaved() {
     removeButton.className = "secondary";
     removeButton.textContent = "Remove from Saved";
 
-    removeButton.onclick = () => toggleSaved(note.id);
+    removeButton.onclick = function() {
+      toggleSaved(note.id);
+    };
 
     card.appendChild(title);
     card.appendChild(text);
     card.appendChild(removeButton);
 
     savedList.appendChild(card);
+
   });
-// QUIZ
+
+}
+
+// QUIZ QUESTIONS
 
 const quizQuestions = [
+
   {
     question: "What is the common normal adult pulse range?",
     options: ["40–50 bpm", "60–100 bpm", "110–130 bpm", "20–30 bpm"],
@@ -465,5 +512,162 @@ const quizQuestions = [
   },
 
   {
+    question: "What is the common normal adult respiratory rate?",
+    options: ["12–20 breaths/min", "30–40 breaths/min", "5–8 breaths/min", "40–50 breaths/min"],
+    answer: 0
+  },
 
+  {
+    question: "Which organ pumps blood throughout the body?",
+    options: ["Lungs", "Kidney", "Heart", "Liver"],
+    answer: 2
+  },
+
+  {
+    question: "Which device measures oxygen saturation?",
+    options: ["Pulse oximeter", "Thermometer", "Stethoscope", "Syringe"],
+    answer: 0
+  }
+
+];
+
+let questionIndex = 0;
+let score = 0;
+let answered = false;
+
+// LOAD QUIZ QUESTION
+
+function loadQuestion() {
+
+  answered = false;
+
+  const q = quizQuestions[questionIndex];
+
+  document.getElementById("questionNumber").textContent =
+    "Question " + (questionIndex + 1) +
+    " of " + quizQuestions.length;
+
+  document.getElementById("question").textContent =
+    q.question;
+
+  document.getElementById("feedback").textContent = "";
+
+  const nextButton = document.getElementById("nextButton");
+
+  nextButton.style.display = "none";
+
+  const optionsDiv = document.getElementById("options");
+
+  optionsDiv.innerHTML = "";
+
+  q.options.forEach((option, index) => {
+
+    const button = document.createElement("button");
+
+    button.textContent = option;
+    button.className = "option";
+
+    button.onclick = function() {
+      checkAnswer(index);
+    };
+
+    optionsDiv.appendChild(button);
+
+  });
+
+}
+
+// CHECK ANSWER
+
+function checkAnswer(selected) {
+
+  if (answered) {
+    return;
+  }
+
+  answered = true;
+
+  const correct = quizQuestions[questionIndex].answer;
+
+  if (selected === correct) {
+
+    score++;
+
+    document.getElementById("feedback").textContent =
+      "✅ Correct answer!";
+
+  } else {
+
+    document.getElementById("feedback").textContent =
+      "❌ Correct answer: " +
+      quizQuestions[questionIndex].options[correct];
+
+  }
+
+  document.getElementById("nextButton").style.display =
+    "block";
+
+}
+
+// NEXT QUESTION
+
+function nextQuestion() {
+
+  questionIndex++;
+
+  if (questionIndex < quizQuestions.length) {
+
+    loadQuestion();
+
+  } else {
+
+    document.getElementById("questionNumber").textContent =
+      "Quiz Completed 🎉";
+
+    document.getElementById("question").textContent =
+      "Your score: " + score + " / " + quizQuestions.length;
+
+    document.getElementById("options").innerHTML = "";
+
+    document.getElementById("feedback").textContent =
+      "Keep learning and improving!";
+
+    const nextButton = document.getElementById("nextButton");
+
+    nextButton.textContent = "Restart Quiz";
+    nextButton.style.display = "block";
+    nextButton.onclick = restartQuiz;
+
+  }
+
+}
+
+// RESTART QUIZ
+
+function restartQuiz() {
+
+  questionIndex = 0;
+  score = 0;
+
+  const nextButton = document.getElementById("nextButton");
+
+  nextButton.textContent = "Next Question";
+  nextButton.onclick = nextQuestion;
+
+  loadQuestion();
+
+}
+
+// START APP
+
+renderNotes();
+renderSaved();
+loadQuestion();
+
+</script>
+
+</body>
+</html>
+
+  
 
